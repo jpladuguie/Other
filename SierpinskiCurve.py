@@ -54,25 +54,17 @@ def ZAG(n):
 # Convert directions
 def turnLeft(direction):
     
-    if direction == 'u':
-        return 'l'
-    elif direction == 'l':
-        return 'd'
-    elif direction == 'd':
-        return 'r'
-    elif direction == 'r':
-        return 'u'
+    directions = ['u', 'l', 'd', 'r']
+    index = directions.index(direction)
+    if index == 3: index = -1
+    return directions[index + 1]
 
 def turnRight(direction):
     
-    if direction == 'u':
-        return 'r'
-    elif direction == 'r':
-        return 'd'
-    elif direction == 'd':
-        return 'l'
-    elif direction == 'l':
-        return 'u'
+    directions = ['u', 'r', 'd', 'l']
+    index = directions.index(direction)
+    if index == 3: index = -1
+    return directions[index + 1]
 
 # Draw line with curved corners
 def drawLine(currentDirection, nextDirection):
@@ -135,5 +127,14 @@ while running:
     event = pygame.event.poll()
     if event.type == pygame.QUIT:
         running = False
+
+
+
+
+
+
+
+
+
 
 
