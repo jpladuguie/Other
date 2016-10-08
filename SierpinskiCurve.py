@@ -71,45 +71,29 @@ def drawLine(currentDirection, nextDirection):
     global currentPoint
     global direction
     
-    if currentDirection == 'u':
-        if nextDirection == 'l':
-            pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] - 4, currentPoint[1] - 4))
-            pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] - 4, currentPoint[1] - 4), (currentPoint[0] - 12, currentPoint[1] - 4))
-            currentPoint = (currentPoint[0] - 12, currentPoint[1] - 4)
-        elif nextDirection == 'r':
-            pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] + 4, currentPoint[1] - 4))
-            pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] + 4, currentPoint[1] - 4), (currentPoint[0] + 12, currentPoint[1] - 4))
-            currentPoint = (currentPoint[0] + 12, currentPoint[1] - 4)
+    directions = []
+    order = []
     
-    elif currentDirection == 'l':
-        if nextDirection == 'u':
-            pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] - 4, currentPoint[1] - 4))
-            pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] - 4, currentPoint[1] - 4), (currentPoint[0] - 4, currentPoint[1] - 12))
-            currentPoint = (currentPoint[0] - 4, currentPoint[1] - 12)
-        elif nextDirection == 'd':
-            pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] - 4, currentPoint[1] + 4))
-            pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] - 4, currentPoint[1] + 4), (currentPoint[0] - 4, currentPoint[1] + 12))
-            currentPoint = (currentPoint[0] - 4, currentPoint[1] + 12)
+    if (currentDirection == 'u' and nextDirection == 'l') or (currentDirection == 'l' and nextDirection == 'u'):
+        directions = [-1, -1]
+    elif (currentDirection == 'u' and nextDirection == 'r') or (currentDirection == 'r' and nextDirection == 'u'):
+        directions = [1, -1]
+    elif (currentDirection == 'd' and nextDirection == 'l') or (currentDirection == 'l' and nextDirection == 'd'):
+        directions = [-1, 1]
+    elif (currentDirection == 'd' and nextDirection == 'r') or (currentDirection == 'r' and nextDirection == 'd'):
+        directions = [1, 1]
+    
+    pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] + directions[0] * 4, currentPoint[1] + directions[1] * 4))
 
-    elif currentDirection == 'd':
-        if nextDirection == 'r':
-            pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] + 4, currentPoint[1] + 4))
-            pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] + 4, currentPoint[1] + 4), (currentPoint[0] + 12, currentPoint[1] + 4))
-            currentPoint = (currentPoint[0] + 12, currentPoint[1] + 4)
-        elif nextDirection == 'l':
-            pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] - 4, currentPoint[1] + 4))
-            pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] - 4, currentPoint[1] + 4), (currentPoint[0] - 12, currentPoint[1] + 4))
-            currentPoint = (currentPoint[0] - 12, currentPoint[1] + 4)
+    if currentDirection == 'u' or currentDirection == 'd':
+        order = [12, 4]
+    else:
+        order = [4, 12]
+    
+    pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] + directions[0] * 4, currentPoint[1] + directions[1] * 4), (currentPoint[0] + directions[0] * order[0], currentPoint[1] + directions[1] * order[1]))
+    currentPoint = (currentPoint[0] + directions[0] * order[0], currentPoint[1] + directions[1] * order[1])
 
-    elif currentDirection == 'r':
-        if nextDirection == 'u':
-            pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] + 4, currentPoint[1] - 4))
-            pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] + 4, currentPoint[1] - 4), (currentPoint[0] + 4, currentPoint[1] - 12))
-            currentPoint = (currentPoint[0] + 4, currentPoint[1] - 12)
-        elif nextDirection == 'd':
-            pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] + 4, currentPoint[1] + 4))
-            pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] + 4, currentPoint[1] + 4), (currentPoint[0] + 4, currentPoint[1] + 12))
-            currentPoint = (currentPoint[0] + 4, currentPoint[1] + 12)
+
 
 # Initialise screen
 screen = pygame.display.set_mode(dimensions)
@@ -127,14 +111,3 @@ while running:
     event = pygame.event.poll()
     if event.type == pygame.QUIT:
         running = False
-
-
-
-
-
-
-
-
-
-
-
