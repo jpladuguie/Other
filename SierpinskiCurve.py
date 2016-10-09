@@ -18,6 +18,7 @@ def ZIG(n):
     global currentDirection
     global nextDirection
     
+    # Draw the lines once n gets to 1, or call functions again until n = 1
     if n == 1:
         nextDirection = turnLeft(currentDirection)
         drawLine(currentDirection, nextDirection)
@@ -35,6 +36,7 @@ def ZAG(n):
     global currentDirection
     global nextDirection
     
+    # Draw the lines once n gets to 1, or call functions again until n = 1
     if n == 1:
         nextDirection = turnRight(currentDirection)
         drawLine(currentDirection, nextDirection)
@@ -74,6 +76,7 @@ def drawLine(currentDirection, nextDirection):
     directions = []
     order = []
     
+    # Draw corner diagonal
     if (currentDirection == 'u' and nextDirection == 'l') or (currentDirection == 'l' and nextDirection == 'u'):
         directions = [-1, -1]
     elif (currentDirection == 'u' and nextDirection == 'r') or (currentDirection == 'r' and nextDirection == 'u'):
@@ -85,15 +88,16 @@ def drawLine(currentDirection, nextDirection):
     
     pygame.draw.line(screen, (255, 255, 255), currentPoint, (currentPoint[0] + directions[0] * 4, currentPoint[1] + directions[1] * 4))
 
+    # Draw straight line part
     if currentDirection == 'u' or currentDirection == 'd':
         order = [12, 4]
     else:
         order = [4, 12]
     
     pygame.draw.line(screen, (255, 255, 255), (currentPoint[0] + directions[0] * 4, currentPoint[1] + directions[1] * 4), (currentPoint[0] + directions[0] * order[0], currentPoint[1] + directions[1] * order[1]))
+    
+    # Save current point
     currentPoint = (currentPoint[0] + directions[0] * order[0], currentPoint[1] + directions[1] * order[1])
-
-
 
 # Initialise screen
 screen = pygame.display.set_mode(dimensions)
