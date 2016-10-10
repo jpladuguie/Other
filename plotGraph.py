@@ -1,8 +1,7 @@
+# Plots a graph of a function and outputs it using matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-
-# Plots a graph of a function and outputs it using matplotlib
 
 # Set font for matplotlib
 font = {'family' : 'serif',
