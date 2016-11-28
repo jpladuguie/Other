@@ -108,39 +108,6 @@ def getData(PlayerId=""):
         print("Error, unable to load data from API.".format(e.errno, e.strerror))
         return false
 
-"""def getData(PlayerId=""):
-    # Start timer to measure time taken to get data.
-    startTime = time.time()
-    
-    # Set HTTP headers for request.
-    headers = {
-    'Host': 'api.fantasydata.net',
-    'Ocp-Apim-Subscription-Key': '5a2b7b21c3524a15a7ab1721bb43d7b8',
-    }
-    
-    # Get all player data or a specific player's data depending on whether the PlayerId has been provided.
-    if PlayerId == "":
-        path = "/soccer/v2/json/PlayerSeasonStats/73?"
-    else:
-        path = "/soccer/v2/json/Player/" + str(PlayerId) + "?"
-    
-    try:
-        conn = httplib2.Http()
-        resp, resp_body = conn.request('http://api.fantasydata.net' + path, "GET", headers=headers, body=None)
-        # Convert the data string to json to be parsed correctly.
-        players = json.loads(resp_body.decode('utf8'))
-        
-    
-        endTime = time.time()
-        print("Data received in " + str(endTime - startTime) + " seconds.")
-    
-        # Return the data.
-        return players
-    # Catch any erros in getting the data.
-    except Exception as e:
-        print("Error, unable to load data from API.".format(e.errno, e.strerror))
-        return false"""
-
 
 # Given a set of data received from the API, it will save it to the database. Only statistical data needs
 # To be updated, as personal information never changes. If the player isn't in the database, their personal
@@ -207,7 +174,7 @@ def normaliseRating(rating):
     sigma = (50.0 / maxZ)
     
     # Get the PlayerId and rating value for each player, sorted by value.
-    data = curs.execute("SELECT PlayerId, " + rating + " FROM Players ORDER BY " + rating + " DESC")
+    data = curs.execute("SELECT PlayerId, Minutes, " + rating + " FROM Players ORDER BY " + rating + " DESC")
     data = data.fetchall()
     
     # Initialise a counter variable.
@@ -215,17 +182,22 @@ def normaliseRating(rating):
     
     # Loop through each player.
     for player in data:
-        # Get a value between 0 and 1 depending on how high the value is.
-        prob = 1.0 - (float(pos) / float(numberOfPlayers + 1.0))
-        # Get the z value from the probablity using the inverse normal distribution.
-        z = norm.ppf(prob)
-        # Calculate the normalised value.
-        value = int(50.0 + sigma * z)
-        # Invert if DisciplineRating as a lower value is better.
-        if rating == "DisciplineRating":
-            value = 100 - value
-        # Update the player with the new value.
-        curs.execute("UPDATE Players SET " + rating + " = ? WHERE PlayerId = ?", (value, player[0]))
+        # If the player hasn't played any matches, set the rating to zero. player[1] is the total minutes played.
+        if int(player[1]) == 0:
+            curs.execute("UPDATE Players SET " + rating + " = 0 WHERE PlayerId = " + player[0])
+        else:
+            # Get a value between 0 and 1 depending on how high the value is.
+            prob = 1.0 - (float(pos) / float(numberOfPlayers + 1.0))
+            # Get the z value from the probablity using the inverse normal distribution.
+            z = norm.ppf(prob)
+            # Calculate the normalised value.
+            value = int(50.0 + sigma * z)
+            # Invert if DisciplineRating as a lower value is better.
+            if rating == "DisciplineRating":
+                value = 100 - value
+            # Update the player with the new value.
+            curs.execute("UPDATE Players SET " + rating + " = ? WHERE PlayerId = ?", (value, player[0]))
+                
         # Increment the counter.
         pos += 1
     
